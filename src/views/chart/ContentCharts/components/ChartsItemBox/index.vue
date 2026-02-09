@@ -10,9 +10,7 @@
         class="item-box"
         v-for="(item, index) in menuOptions"
         :key="item.title"
-        draggable
-        @dragstart="!item.disabled && dragStartHandle($event, item)"
-        @dragend="!item.disabled && dragendHandle()"
+        @pointerdown="!item.disabled && pointerDownHandle($event, item)"
         @dblclick="dblclickHandle(item)"
         @click="clickHandle(item)"
       >
@@ -58,7 +56,7 @@ import { EditCanvasTypeEnum } from '@/store/modules/chartEditStore/chartEditStor
 import { ChartModeEnum } from '@/store/modules/chartLayoutStore/chartLayoutStore.d'
 import { useChartLayoutStore } from '@/store/modules/chartLayoutStore/chartLayoutStore'
 import { usePackagesStore } from '@/store/modules/packagesStore/packagesStore'
-import { componentInstall, loadingStart, loadingFinish, loadingError, JSONStringify, goDialog } from '@/utils'
+import { componentInstall, loadingStart, loadingFinish, loadingError, JSONStringify, goDialog,setComponentPosition } from '@/utils'
 import { DragKeyEnum } from '@/enums/editPageEnum'
 import { createComponent } from '@/packages'
 import { ConfigType, CreateComponentType, PackagesCategoryEnum } from '@/packages/index.d'
@@ -94,20 +92,98 @@ const chartMode: Ref<ChartModeEnum> = computed(() => {
 })
 
 // 拖拽处理
-const dragStartHandle = (e: DragEvent, item: ConfigType) => {
+// 指针事件拖拽处理
+let draggingItem: ConfigType | null = null
+let startX: number = 0
+let startY: number = 0
+
+const pointerDownHandle = (e: PointerEvent, item: ConfigType) => {
   if (item.disabled) return
+  
   // 动态注册图表组件
   componentInstall(item.chartKey, fetchChartComponent(item))
   componentInstall(item.conKey, fetchConfigComponent(item))
-  // 将配置项绑定到拖拽属性上
-  e!.dataTransfer!.setData(DragKeyEnum.DRAG_KEY, JSONStringify(omit(item, ['image'])))
+  
+  // 记录拖拽数据
+  draggingItem = item
+  startX = e.clientX
+  startY = e.clientY
+  
   // 修改状态
   chartEditStore.setEditCanvas(EditCanvasTypeEnum.IS_CREATE, true)
+  
+  // 添加全局指针事件监听器
+  document.addEventListener('pointermove', pointerMoveHandle)
+  document.addEventListener('pointerup', pointerUpHandle)
+  
+  // 设置指针捕获，确保事件能正确跟踪
+  if (e.currentTarget instanceof Element) {
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
 }
 
-// 拖拽结束
-const dragendHandle = () => {
-  chartEditStore.setEditCanvas(EditCanvasTypeEnum.IS_CREATE, false)
+const pointerMoveHandle = (e: PointerEvent) => {
+  if (!draggingItem) return
+  
+  // 计算拖拽距离
+  const deltaX = e.clientX - startX
+  const deltaY = e.clientY - startY
+  
+  // 这里可以添加拖拽视觉效果
+  // 例如创建一个跟随鼠标的拖拽预览元素
+}
+
+const pointerUpHandle = async (e: PointerEvent) => {
+  if (!draggingItem) return
+  
+  try {
+    // 检查是否释放到画布区域
+    const canvasElement = document.querySelector('#go-chart-edit-content')
+    if (canvasElement) {
+      // 获取画布的边界信息
+      const canvasRect = canvasElement.getBoundingClientRect()
+      
+      // 检查指针释放位置是否在画布内
+      if (e.clientX >= canvasRect.left && e.clientX <= canvasRect.right &&
+          e.clientY >= canvasRect.top && e.clientY <= canvasRect.bottom) {
+        
+        // 计算在画布内的相对位置
+        const offsetX = e.clientX - canvasRect.left
+        const offsetY = e.clientY - canvasRect.top
+        
+        // 创建新图表组件
+        loadingStart()
+        
+        // 创建新图表组件
+        let newComponent = await createComponent(omit(draggingItem, ['image']))
+        if (draggingItem.redirectComponent) {
+          draggingItem.dataset && (newComponent.option.dataset = draggingItem.dataset)
+          newComponent.chartConfig.title = draggingItem.title
+          newComponent.chartConfig.chartFrame = draggingItem.chartFrame
+        }
+        
+        // 设置组件位置
+        setComponentPosition(newComponent, offsetX - newComponent.attr.w / 2, offsetY - newComponent.attr.h / 2)
+        
+        // 添加到画布
+        chartEditStore.addComponentList(newComponent, false, true)
+        chartEditStore.setTargetSelectChart(newComponent.id)
+        
+        loadingFinish()
+      }
+    }
+  } catch (error) {
+    loadingError()
+    window['$message'].warning(`图表正在研发中, 敬请期待...`)
+  } finally {
+    // 清理状态
+    chartEditStore.setEditCanvas(EditCanvasTypeEnum.IS_CREATE, false)
+    draggingItem = null
+    
+    // 移除全局事件监听器
+    document.removeEventListener('pointermove', pointerMoveHandle)
+    document.removeEventListener('pointerup', pointerUpHandle)
+  }
 }
 
 // 双击添加
@@ -195,6 +271,7 @@ $halfCenterHeight: 50px;
     @include fetch-bg-color('background-color2');
     &:hover {
       @include hover-border-color('background-color4');
+      cursor: all-scroll;
       .list-img {
         transform: scale(1.08);
       }

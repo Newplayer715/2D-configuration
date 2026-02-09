@@ -13,48 +13,66 @@ const chartEditStore = useChartEditStore()
 const { onClickOutSide } = useContextMenu()
 
 // * 拖拽到编辑区域里
-export const dragHandle = async (e: DragEvent) => {
-  e.preventDefault()
+// export const dragHandle = async (e: DragEvent) => {
+//   e.preventDefault()
 
-  try {
-    loadingStart()
+//   try {
+//     loadingStart()
 
-    // 获取拖拽数据
-    const drayDataString = e!.dataTransfer!.getData(DragKeyEnum.DRAG_KEY)
-    if (!drayDataString) {
-      loadingFinish()
-      return
-    }
+//     // 获取拖拽数据
+//     const drayDataString = e!.dataTransfer!.getData(DragKeyEnum.DRAG_KEY)
+//     if (!drayDataString) {
+//       loadingFinish()
+//       return
+//     }
 
-    // 修改状态
-    chartEditStore.setEditCanvas(EditCanvasTypeEnum.IS_CREATE, false)
-    const dropData: Exclude<ConfigType, ['image']> = JSONParse(drayDataString)
-    if (dropData.disabled) return
+//     // 修改状态
+//     chartEditStore.setEditCanvas(EditCanvasTypeEnum.IS_CREATE, false)
+//     const dropData: Exclude<ConfigType, ['image']> = JSONParse(drayDataString)
+//     if (dropData.disabled) return
 
-    // 创建新图表组件
-    let newComponent: CreateComponentType = await createComponent(dropData)
-    if (dropData.redirectComponent) {
-      dropData.dataset && (newComponent.option.dataset = dropData.dataset)
-      newComponent.chartConfig.title = dropData.title
-      newComponent.chartConfig.chartFrame = dropData.chartFrame
-    }
+//     // 创建新图表组件
+//     let newComponent: CreateComponentType = await createComponent(dropData)
+//     if (dropData.redirectComponent) {
+//       dropData.dataset && (newComponent.option.dataset = dropData.dataset)
+//       newComponent.chartConfig.title = dropData.title
+//       newComponent.chartConfig.chartFrame = dropData.chartFrame
+//     }
 
-    setComponentPosition(newComponent, e.offsetX - newComponent.attr.w / 2, e.offsetY - newComponent.attr.h / 2)
-    chartEditStore.addComponentList(newComponent, false, true)
-    chartEditStore.setTargetSelectChart(newComponent.id)
-    loadingFinish()
-  } catch (error) {
-    loadingError()
-    window['$message'].warning(`图表正在研发中, 敬请期待...`)
-  }
-}
+//     setComponentPosition(newComponent, e.offsetX - newComponent.attr.w / 2, e.offsetY - newComponent.attr.h / 2)
+//     chartEditStore.addComponentList(newComponent, false, true)
+//     chartEditStore.setTargetSelectChart(newComponent.id)
+//     loadingFinish()
+//   } catch (error) {
+//     loadingError()
+//     window['$message'].warning(`图表正在研发中, 敬请期待...`)
+//   }
+// }
 
 // * 进入拖拽区域
 export const dragoverHandle = (e: DragEvent) => {
-  e.preventDefault()
-  e.stopPropagation()
+  console.log('dragover event:', e)
+  console.log('dataTransfer available:', !!e.dataTransfer)
+  
+  try {
+    if (e.preventDefault) {
+      e.preventDefault()
+    }
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    }
 
-  if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'
+    if (e.dataTransfer) {
+      try {
+        e.dataTransfer.dropEffect = 'copy'
+        console.log('dropEffect set to copy')
+      } catch (err) {
+        console.error('Error setting dropEffect:', err)
+      }
+    }
+  } catch (err) {
+    console.error('dragover error:', err)
+  }
 }
 
 // * 不拦截默认行为点击

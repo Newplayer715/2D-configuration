@@ -1,6 +1,6 @@
 <template>
-  <n-layout has-sider sider-placement="right">
-    <n-layout-content>
+  <n-layout style="background-color: transparent;" has-sider sider-placement="right">
+    <n-layout-content style="background-color: transparent;">
       <!-- 图表拖拽区域 -->
       <content-edit></content-edit>
     </n-layout-content>

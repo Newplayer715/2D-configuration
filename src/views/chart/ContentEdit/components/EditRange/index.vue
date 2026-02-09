@@ -1,5 +1,5 @@
 <template>
-  <div class="go-edit-range go-transition" :style="rangeStyle" @mousedown="mousedownBoxSelect($event, undefined)">
+  <div class="go-edit-range go-transition" :style="rangeStyle">
     <slot></slot>
     <!-- 水印 -->
     <edit-watermark></edit-watermark>
@@ -46,7 +46,7 @@ const rangeStyle = computed(() => {
 const rangeModelStyle = computed(() => {
   const dragStyle = getEditCanvas.value.isCreate && { 'z-index': 99999 }
   // @ts-ignore
-  return { ...useSizeStyle(size.value), ...dragStyle }
+  return { ...useSizeStyle(size.value), ...dragStyle,backgroundColor:'transparent' }
 })
 </script>
 
@@ -56,8 +56,8 @@ const rangeModelStyle = computed(() => {
   transform-origin: left top;
   background-size: cover;
   overflow: hidden;
-  @include fetch-border-color('hover-border-color');
-  @include fetch-bg-color('background-color2');
+  background-color: transparent;
+  border-color: transparent;
   @include go(edit-range-model) {
     z-index: -1;
     position: absolute;
@@ -66,3 +66,4 @@ const rangeModelStyle = computed(() => {
   }
 }
 </style>
+

@@ -84,6 +84,8 @@ const btnHandle = (key: string) => {
   closeHandle()
   const id = getUUID()
   const path = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href')
+  console.log(path + id, 'openNewWindow');
+  ue5('openNewWindow', path +'/' + id)
   routerTurnByPath(path, [id], undefined, true)
 }
 </script>

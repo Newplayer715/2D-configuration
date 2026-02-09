@@ -1,7 +1,7 @@
 <template>
   <!-- 工作台相关 -->
   <div class="go-chart">
-    <n-layout>
+    <n-layout style="background-color: transparent;">
       <layout-header-pro>
         <template #left>
           <header-left-btn></header-left-btn>
@@ -13,9 +13,11 @@
           <header-right-btn></header-right-btn>
         </template>
       </layout-header-pro>
-      <n-layout-content content-style="overflow:hidden; display: flex">
+      <n-layout-content style="background-color: transparent;" content-style="overflow:hidden; display: flex">
         <div style="overflow:hidden; display: flex">
+          <!-- 组件列表 -->
           <content-charts></content-charts>
+          <!-- 工作台图层 -->
           <content-layers></content-layers>
         </div>
         <content-configurations></content-configurations>

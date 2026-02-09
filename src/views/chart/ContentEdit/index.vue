@@ -9,9 +9,6 @@
     :xScroll="true"
     :disabledScroll="true"
     @mousedown="mousedownHandleUnStop"
-    @drop="dragHandle"
-    @dragover="dragoverHandle"
-    @dragenter="dragoverHandle"
   >
     <edit-rule>
       <!-- 画布主体 -->
@@ -94,7 +91,7 @@ import { useChartEditStore } from '@/store/modules/chartEditStore/chartEditStore
 import { SCALE_KEY } from '@/views/preview/hooks/useScale.hook'
 import { useLayout } from './hooks/useLayout.hook'
 import { useAddKeyboard } from '../hooks/useKeyboard.hook'
-import { dragHandle, dragoverHandle, mousedownHandleUnStop, useMouseHandle } from './hooks/useDrag.hook'
+import { mousedownHandleUnStop, useMouseHandle } from './hooks/useDrag.hook'
 import { useComponentStyle, useSizeStyle } from './hooks/useStyle.hook'
 import { useInitVChartsTheme } from '@/hooks'
 
@@ -192,8 +189,10 @@ onMounted(() => {
   position: relative;
   width: 100%;
   overflow: hidden;
-  @extend .go-point-bg;
-  @include background-image('background-point');
+  // @extend .go-point-bg;
+  // @include background-image('background-point');
+  /* 移除黑点背景 */
+  background-color: transparent;
 
   @include goId('chart-edit-content') {
     overflow: hidden;
