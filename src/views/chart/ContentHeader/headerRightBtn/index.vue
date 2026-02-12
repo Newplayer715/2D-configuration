@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { renderIcon, goDialog, fetchPathByName, routerTurnByPath, setSessionStorage, getSessionStorage } from '@/utils'
-import { PreviewEnum } from '@/enums/pageEnum'
+import { PreviewEnum, ChartEnum } from '@/enums/pageEnum'
 import { StorageEnum } from '@/enums/storageEnum'
 import { useRoute } from 'vue-router'
 import { useChartEditStore } from '@/store/modules/chartEditStore/chartEditStore'
@@ -53,15 +53,45 @@ const previewHandle = () => {
   }
   // 跳转
   routerTurnByPath(path, [previewId], undefined, true)
+  ue5('openNewWindow', path + '/' + previewId)
+  const savePath = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href')
+  ue5('saveWindow', savePath + '/' + previewId)
+  ue5('openSaveWindow', path + '/' + previewId)
 }
-
+const saveData = () => {
+  const { id } = routerParamsInfo.params
+  const saveId = typeof id === 'string' ? id : id[0]
+  const storageInfo = chartEditStore.getStorageInfo()
+  const sessionStorageInfo = getSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST) || []
+  console.log('sessionStorageInfo', sessionStorageInfo);
+  
+  if (sessionStorageInfo?.length) {
+    const repeateIndex = sessionStorageInfo.findIndex((e: { id: string }) => e.id === saveId)
+    if (repeateIndex !== -1) {
+      sessionStorageInfo.splice(repeateIndex, 1, { id: saveId, ...storageInfo })
+      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+    } else {
+      sessionStorageInfo.push({ id: saveId, ...storageInfo })
+      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+    }
+  } else {
+    setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ id: saveId, ...storageInfo }])
+  }
+  goDialog({
+    message: '保存成功',
+    positiveText: '确定',
+    closeNegativeText: true,
+    onPositiveCallback: () => { }
+  })
+  console.log('保存成功', storageInfo)
+}
 // 发布
 const sendHandle = () => {
   goDialog({
     message: '想体验发布功能，请前往 master-fetch 分支查看: https://gitee.com/MTrun/go-view/tree/master-fetch',
     positiveText: '了然',
     closeNegativeText: true,
-    onPositiveCallback: () => {}
+    onPositiveCallback: () => { }
   })
 }
 
@@ -75,17 +105,25 @@ const btnList = [
   },
   {
     select: true,
-    title: '预览',
+    title: '保存',
     icon: renderIcon(BrowsersOutlineIcon),
-    event: previewHandle
+    event: saveData
   },
   {
     select: true,
-    title: '发布',
+    title: '完成',
     icon: renderIcon(SendIcon),
-    event: sendHandle
+    event: previewHandle
   }
+  // {
+  //   select: true,
+  //   title: '发布',
+  //   icon: renderIcon(SendIcon),
+  //   event: sendHandle
+  // }
 ]
+
+
 
 const comBtnList = computed(() => {
   if (chartEditStore.getEditCanvas.isCodeEdit) {

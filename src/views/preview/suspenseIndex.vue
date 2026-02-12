@@ -75,7 +75,8 @@ useInitVChartsTheme(chartEditStore)
   position: relative;
   height: 100vh;
   width: 100vw;
-  @include background-image('background-image');
+  background-color: transparent;
+  // @include background-image('background-image');
   &.fit,
   &.full {
     display: flex;

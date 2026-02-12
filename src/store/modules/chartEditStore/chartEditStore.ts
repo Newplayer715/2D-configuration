@@ -951,7 +951,12 @@ export const useChartEditStore = defineStore({
         // 用户设定大小
         const editCanvasWidth = this.editCanvasConfig.width
         const editCanvasHeight = this.editCanvasConfig.height
-
+        const windowSize = {
+          width: width,
+          height: height
+        }
+        ue5('windowSizeChange', windowSize)
+        console.log('width', width, 'height', height, 'editCanvasWidth', editCanvasWidth, 'editCanvasHeight', editCanvasHeight);
         // 需保持的比例
         const baseProportion = parseFloat((editCanvasWidth / editCanvasHeight).toFixed(5))
         const currentRate = parseFloat((width / height).toFixed(5))

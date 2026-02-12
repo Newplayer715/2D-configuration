@@ -246,6 +246,7 @@ $carousel-image-height: 60vh;
   height: $go-login-height;
   overflow: hidden;
   @include background-image('background-image');
+  user-select: none;  /* 禁止选择 */
   &-header {
     display: flex;
     justify-content: space-between;

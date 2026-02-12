@@ -14,7 +14,7 @@
         </template>
       </layout-header-pro>
       <n-layout-content style="background-color: transparent;" content-style="overflow:hidden; display: flex">
-        <div style="overflow:hidden; display: flex">
+        <div class="go-right-box">
           <!-- 组件列表 -->
           <content-charts></content-charts>
           <!-- 工作台图层 -->
@@ -25,17 +25,9 @@
     </n-layout>
   </div>
   <!-- 右键 -->
-  <n-dropdown
-    placement="bottom-start"
-    trigger="manual"
-    size="small"
-    :x="mousePosition.x"
-    :y="mousePosition.y"
-    :options="menuOptions"
-    :show="chartEditStore.getRightMenuShow"
-    :on-clickoutside="onClickOutSide"
-    @select="handleMenuSelect"
-  ></n-dropdown>
+  <n-dropdown placement="bottom-start" trigger="manual" size="small" :x="mousePosition.x" :y="mousePosition.y"
+    :options="menuOptions" :show="chartEditStore.getRightMenuShow" :on-clickoutside="onClickOutSide"
+    @select="handleMenuSelect"></n-dropdown>
   <!-- 加载蒙层 -->
   <content-load></content-load>
 </template>
@@ -75,6 +67,13 @@ const {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background-color: transparent;
+
+}
+
+@include go("right-box") {
+  overflow: hidden;
+  display: flex;
   @include background-image("background-image");
 }
 </style>

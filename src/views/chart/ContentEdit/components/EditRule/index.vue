@@ -1,28 +1,12 @@
 <template>
   <div class="go-sketch-rule">
-    <sketch-rule
-      v-if="sketchRuleReDraw"
-      :thick="thick"
-      :scale="scale"
-      :width="canvasBox().width"
-      :height="canvasBox().height"
-      :startX="startX"
-      :startY="startY"
-      :lines="lines"
-      :palette="paletteStyle"
-    >
+    <sketch-rule v-if="sketchRuleReDraw" :thick="thick" :scale="scale" :width="canvasBox().width"
+      :height="canvasBox().height" :startX="startX" :startY="startY" :lines="lines" :palette="paletteStyle">
     </sketch-rule>
     <div ref="$app" class="edit-screens" @scroll="handleScroll">
-      <div ref="$container" class="edit-screen-container" :style="{ width: containerWidth }">
-        <div
-          ref="refSketchRuleBox"
-          class="canvas"
-          @mousedown="dragCanvas"
-          :style="{ marginLeft: '-' + (canvasBox().width / 2 - 25) + 'px' }"
-        >
-          <div :style="{ pointerEvents: isPressSpace ? 'none' : 'auto' }">
-            <slot></slot>
-          </div>
+      <div ref="refSketchRuleBox" class="canvas" @mousedown="dragCanvas">
+        <div :style="{ pointerEvents: isPressSpace ? 'none' : 'auto' }" class="edit-content">
+          <slot></slot>
         </div>
       </div>
     </div>
@@ -50,7 +34,6 @@ let prevMoveYValue = [0, 0]
 const $app = ref()
 const sketchRuleReDraw = ref(true)
 const refSketchRuleBox = ref()
-const $container = ref()
 const isPressSpace = ref(false)
 const cursorStyle = ref('auto')
 const { width, height } = toRefs(chartEditStore.getEditCanvasConfig)
@@ -64,12 +47,14 @@ const scale = computed(() => {
 
 // 滚动条拖动的宽度
 const containerWidth = computed(() => {
+  console.log('window.innerWidth', window.innerWidth);
+
   return `${window.innerWidth * 2}px`
 })
 
 // 滚动条拖动的高度
 const containerHeight = computed(() => {
-  return `${height.value * 2}px`
+  return `${height.value}px`
 })
 
 // 主题
@@ -77,14 +62,14 @@ const paletteStyle = computed(() => {
   const isDarkTheme = designStore.getDarkTheme
   return isDarkTheme
     ? {
-        bgColor: '#18181c',
-        longfgColor: '#4d4d4d',
-        shortfgColor: '#4d4d4d',
-        fontColor: '#4d4d4d',
-        shadowColor: '#18181c',
-        borderColor: '#18181c',
-        cornerActiveColor: '#18181c'
-      }
+      bgColor: 'transparent',
+      longfgColor: '#4d4d4d',
+      shortfgColor: '#4d4d4d',
+      fontColor: '#4d4d4d',
+      shadowColor: '#18181c',
+      borderColor: '#18181c',
+      cornerActiveColor: '#18181c'
+    }
     : {}
 })
 
@@ -183,11 +168,11 @@ const reDraw = throttle(() => {
   setTimeout(() => {
     sketchRuleReDraw.value = true
   }, 10)
-},20)
+}, 20)
 
 // 滚动居中
 const canvasPosCenter = () => {
-  const { width: containerWidth, height: containerHeight } = $container.value.getBoundingClientRect()
+  const { width: containerWidth, height: containerHeight } = $app.value.getBoundingClientRect()
   const { width, height } = canvasBox()
 
   $app.value.scrollLeft = containerWidth / 2 - width / 2
@@ -211,8 +196,8 @@ watch(
     }
     handleScroll()
     setTimeout(() => {
-        canvasPosCenter()
-        reDraw()
+      canvasPosCenter()
+      reDraw()
     }, 400)
   }
 )
@@ -300,8 +285,9 @@ window.onKeySpacePressHold = (isHold: boolean) => {
   .edit-screens {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 60px - 40px);
     overflow: auto;
+    box-sizing: border-box;
     user-select: none;
     padding-bottom: 0px;
 
@@ -323,6 +309,7 @@ window.onKeySpacePressHold = (isHold: boolean) => {
       border-radius: 5px;
       background-color: rgba(144, 146, 152, 0.3);
     }
+
     // 修复右下角白点用的
     &::-webkit-scrollbar-corner {
       background-color: transparent;
@@ -346,18 +333,24 @@ window.onKeySpacePressHold = (isHold: boolean) => {
   }
 
   .canvas {
-    position: absolute;
-    top:50%;
-    left: 50%;
-    transform-origin: 50% 0;
-    transform: translateY(-50%);
+    position: relative;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
 
+    
     &:hover {
       cursor: v-bind('cursorStyle');
     }
 
     &:active {
       cursor: crosshair;
+    }
+    .edit-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 }
