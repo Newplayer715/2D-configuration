@@ -33,17 +33,32 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { loadAsyncComponent } from '@/utils'
 import { LayoutHeaderPro } from '@/layout/components/LayoutHeaderPro'
 import { useContextMenu } from './hooks/useContextMenu.hook'
 import { useChartEditStore } from '@/store/modules/chartEditStore/chartEditStore'
 import { useChartHistoryStore } from '@/store/modules/chartHistoryStore/chartHistoryStore'
+import { useRoute } from 'vue-router'
 
 const chartHistoryStoreStore = useChartHistoryStore()
 const chartEditStore = useChartEditStore()
+const route = useRoute()
 
 // 记录初始化
 chartHistoryStoreStore.canvasInit(chartEditStore.getEditCanvas)
+
+// 从本地存储加载数据
+onMounted(() => {
+  const { id } = route.params
+
+  
+  if (id) {
+    const loadId = typeof id === 'string' ? id : id[0]
+      console.log('id',loadId);
+    chartEditStore.loadFromLocalStorage(loadId)
+  }
+})
 
 const HeaderLeftBtn = loadAsyncComponent(() => import('./ContentHeader/headerLeftBtn/index.vue'))
 const HeaderRightBtn = loadAsyncComponent(() => import('./ContentHeader/headerRightBtn/index.vue'))

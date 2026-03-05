@@ -17,7 +17,28 @@ type UploadCompletedEventType = {
   url: string
 }
 
-const userPhotosList: ConfigType[] = getLocalStorage(StoreKey) || []
+// 初始化为空数组
+let userPhotosList: ConfigType[] = []
+
+// 通过 ue5 发送消息获取图片列表
+ue5('getUploadFile')
+
+ue.interface.getFile =  (data: any) => {
+  userPhotosList = data || []
+  console.log('userPhotosList', userPhotosList);
+  
+  // 动态更新 packagesStore 中的图片列表
+  const packagesStore = usePackagesStore()
+  if (packagesStore && packagesStore.getPackagesList && packagesStore.getPackagesList.Photos) {
+    // 添加新的图片列表
+    userPhotosList.forEach((photo, index) => {
+      packagesStore.getPackagesList.Photos.splice(index + 1, 0, photo)
+    })
+    
+    console.log('图片列表已更新:', packagesStore.getPackagesList.Photos)
+  }
+}
+
 
 const uploadFile = (callback: Function | null = null) => {
   const input = document.createElement('input')
@@ -59,7 +80,7 @@ const addConfig = {
     // 点击上传事件
     addHandle: (photoConfig: ConfigType) => {
       goDialog({
-        message: `图片需小于 ${backgroundImageSize}M 且只暂存在浏览器中。当前图片暂存上限5M，超过不再缓存新图片，请自行对接后端接口！现编译成 base64 进行渲染，对接后端后请使用【URL地址】进行交互！`,
+        message: `图片需小于 ${backgroundImageSize}M `,
         transformOrigin: 'center',
         onPositiveCallback: () => {
           uploadFile((e: UploadCompletedEventType) => {
@@ -76,9 +97,10 @@ const addConfig = {
               dataset: e.url,
               redirectComponent: `${ImageConfig.package}/${ImageConfig.category}/${ImageConfig.key}` // 跳转组件路径规则：packageName/categoryName/componentKey
             }
-            userPhotosList.unshift(newPhoto)
+            // userPhotosList.unshift(newPhoto)
             // 存储在本地数据中
-            setLocalStorage(StoreKey, userPhotosList)
+            // setLocalStorage(StoreKey, userPhotosList)
+            ue5('uploadFile', newPhoto)
             // 插入到上传按钮前的位置
             packagesStore.addPhotos(newPhoto, 1)
           })

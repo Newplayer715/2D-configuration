@@ -100,12 +100,18 @@ const reverseList = computed(() => {
   return list.reverse()
 })
 
+// 监听组件列表变化
 watch(
-  () => reverseList.value,
-  newValue => {
-    layerList.value = newValue
-  }
+  () => chartEditStore.getComponentList,
+  () => {
+    layerList.value = reverseList.value
+    
+  },
+  { deep: true }
 )
+
+// 组件加载时手动初始化数据
+layerList.value = reverseList.value
 
 // 右键事件
 const optionsHandle = (

@@ -1,4 +1,4 @@
-import { getSessionStorage } from '@/utils'
+import { getLocalStorage } from '@/utils'
 import { StorageEnum } from '@/enums/storageEnum'
 import { ChartEditStorage } from '@/store/modules/chartEditStore/chartEditStore.d'
 import { useChartEditStore } from '@/store/modules/chartEditStore/chartEditStore'
@@ -15,7 +15,7 @@ export const getSessionStorageInfo = () => {
   const toPathArray = urlHash.split('/')
   const id = toPathArray && toPathArray[toPathArray.length - 1]
 
-  const storageList: ChartEditStorageType[] = getSessionStorage(
+  const storageList: ChartEditStorageType[] = getLocalStorage(
     StorageEnum.GO_CHART_STORAGE_LIST
   )
 

@@ -32,7 +32,7 @@
         <!-- 遮罩 -->
         <div v-if="item.disabled" class="list-model"></div>
         <!-- 工具栏 -->
-        <div v-if="isShowTools(item)" class="list-tools go-transition" @click="deleteHandle(item, index)">
+        <div v-if="isShowTools(item)" class="list-tools go-transition" @click.stop="deleteHandle(item, index)" @pointerdown.stop>
           <n-button text type="default" color="#ffffff">
             <template #icon>
               <n-icon>

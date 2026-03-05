@@ -22,11 +22,17 @@ export const usePackagesStore = defineStore({
       this.packagesList.Photos.splice(index, 0, newPhoto)
     },
     deletePhotos(photoInfo: ConfigType, index: number) {
+
+      const fileIndex = index - 1
+      console.log('this.packagesList.Photos', this.packagesList.Photos, fileIndex);
+      ue5('deleteUploadFile', fileIndex)
       this.packagesList.Photos.splice(index, 1)
-      const StoreKey = StorageEnum.GO_USER_MEDIA_PHOTOS
-      const userPhotosList = getLocalStorage(StoreKey)
-      userPhotosList.splice(index - 1, 1)
-      setLocalStorage(StoreKey, userPhotosList)
+      // const StoreKey = StorageEnum.GO_USER_MEDIA_PHOTOS
+      // console.log('删除图片:', StoreKey);
+
+      // const userPhotosList = getLocalStorage(StoreKey)
+      // userPhotosList.splice(index - 1, 1)
+      // setLocalStorage(StoreKey, userPhotosList)
     }
   }
 })

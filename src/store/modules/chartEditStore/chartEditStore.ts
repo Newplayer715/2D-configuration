@@ -998,6 +998,39 @@ export const useChartEditStore = defineStore({
         this.getEditCanvas.userScale = scale
         this.getEditCanvas.scale = scale
       }
+    },
+    // * 从本地存储加载数据
+    loadFromLocalStorage(id: string) {
+      try {
+        const localStorageInfo = JSON.parse(localStorage.getItem('GO_CHART_STORAGE_LIST') || '[]')
+        console.log('GO_CHART_STORAGE_LIST', localStorageInfo)
+        const storedData = localStorageInfo.find((item: { id: string }) => item.id === id)
+        
+        if (storedData) {
+          // 加载画布配置
+          if (storedData[ChartEditStoreEnum.EDIT_CANVAS_CONFIG]) {
+            this.editCanvasConfig = storedData[ChartEditStoreEnum.EDIT_CANVAS_CONFIG]
+          }
+          // 加载组件列表
+          if (storedData[ChartEditStoreEnum.COMPONENT_LIST]) {
+            console.log('storedData',storedData);
+            
+            this.componentList = storedData[ChartEditStoreEnum.COMPONENT_LIST]
+            console.log('componentList', this.componentList);
+            
+          }
+          // 加载请求配置
+          if (storedData[ChartEditStoreEnum.REQUEST_GLOBAL_CONFIG]) {
+            this.requestGlobalConfig = storedData[ChartEditStoreEnum.REQUEST_GLOBAL_CONFIG]
+          }
+          console.log('从本地存储加载数据成功', storedData)
+          return true
+        }
+        return false
+      } catch (error) {
+        console.error('从本地存储加载数据失败', error)
+        return false
+      }
     }
   }
 })

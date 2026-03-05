@@ -25,9 +25,9 @@
        ></n-menu>
       </aside>
       <!-- 底部提示 -->
-      <div class="sider-bottom">
+      <!-- <div class="sider-bottom">
         <project-layout-aside-footer :collapsed="collapsed"></project-layout-aside-footer>
-      </div>
+      </div> -->
     </div>
   </n-layout-sider>
 </template>

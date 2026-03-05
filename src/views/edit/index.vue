@@ -46,7 +46,7 @@ import { ref } from 'vue'
 import { MonacoEditor } from '@/components/Pages/MonacoEditor'
 import { SavePageEnum } from '@/enums/editPageEnum'
 import { getSessionStorageInfo } from '../preview/utils'
-import { setSessionStorage, JSONStringify, JSONParse, setTitle, goDialog } from '@/utils'
+import { setLocalStorage, JSONStringify, JSONParse, setTitle, goDialog } from '@/utils'
 import { StorageEnum } from '@/enums/storageEnum'
 import { icon } from '@/plugins'
 import type { ChartEditStorageType } from '../preview/index.d'
@@ -98,7 +98,7 @@ function importJSON() {
 // 同步数据编辑页
 window.opener.addEventListener(SavePageEnum.CHART, (e: any) => {
   window['$message'].success('正在进行更新...')
-  setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, [e.detail])
+  setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, [e.detail])
   content.value = JSONStringify(e.detail)
 })
 

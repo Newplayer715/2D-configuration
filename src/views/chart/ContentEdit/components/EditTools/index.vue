@@ -71,7 +71,7 @@ import {
   fetchRouteParamsLocation,
   fetchPathByName,
   routerTurnByPath,
-  setSessionStorage,
+  setLocalStorage,
   getLocalStorage
 } from '@/utils'
 import { EditEnum } from '@/enums/pageEnum'
@@ -166,13 +166,13 @@ const updateToSession = (id: string) => {
     // 重复替换
     if (repeateIndex !== -1) {
       sessionStorageInfo.splice(repeateIndex, 1, { ...storageInfo, id })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     } else {
       sessionStorageInfo.push({ ...storageInfo, id })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     }
   } else {
-    setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ ...storageInfo, id }])
+    setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ ...storageInfo, id }])
   }
 }
 

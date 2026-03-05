@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { renderIcon, goDialog, fetchPathByName, routerTurnByPath, setSessionStorage, getSessionStorage } from '@/utils'
+import { renderIcon, goDialog, fetchPathByName, routerTurnByPath, setLocalStorage, getLocalStorage } from '@/utils'
 import { PreviewEnum, ChartEnum } from '@/enums/pageEnum'
 import { StorageEnum } from '@/enums/storageEnum'
 import { useRoute } from 'vue-router'
@@ -33,23 +33,24 @@ const previewHandle = () => {
   // id 标识
   const previewId = typeof id === 'string' ? id : id[0]
   const storageInfo = chartEditStore.getStorageInfo()
-  const sessionStorageInfo = getSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST) || []
+  const sessionStorageInfo = getLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST) || []
+  console.log('sessionStorageInfo', sessionStorageInfo,'StorageEnum',StorageEnum.GO_CHART_STORAGE_LIST);
 
   if (sessionStorageInfo?.length) {
     const repeateIndex = sessionStorageInfo.findIndex((e: { id: string }) => e.id === previewId)
     // 重复替换
     if (repeateIndex !== -1) {
       sessionStorageInfo.splice(repeateIndex, 1, { id: previewId, ...storageInfo })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     } else {
       sessionStorageInfo.push({
         id: previewId,
         ...storageInfo
       })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     }
   } else {
-    setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ id: previewId, ...storageInfo }])
+    setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ id: previewId, ...storageInfo }])
   }
   // 跳转
   routerTurnByPath(path, [previewId], undefined, true)
@@ -59,23 +60,25 @@ const previewHandle = () => {
   ue5('openSaveWindow', path + '/' + previewId)
 }
 const saveData = () => {
+  console.log('saveData', routerParamsInfo.params);
+  
   const { id } = routerParamsInfo.params
   const saveId = typeof id === 'string' ? id : id[0]
   const storageInfo = chartEditStore.getStorageInfo()
-  const sessionStorageInfo = getSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST) || []
-  console.log('sessionStorageInfo', sessionStorageInfo);
+  const sessionStorageInfo = getLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST) || []
+  console.log('sessionStorageInfo', sessionStorageInfo,'StorageEnum',StorageEnum.GO_CHART_STORAGE_LIST);
   
   if (sessionStorageInfo?.length) {
     const repeateIndex = sessionStorageInfo.findIndex((e: { id: string }) => e.id === saveId)
     if (repeateIndex !== -1) {
       sessionStorageInfo.splice(repeateIndex, 1, { id: saveId, ...storageInfo })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     } else {
       sessionStorageInfo.push({ id: saveId, ...storageInfo })
-      setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
+      setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, sessionStorageInfo)
     }
   } else {
-    setSessionStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ id: saveId, ...storageInfo }])
+    setLocalStorage(StorageEnum.GO_CHART_STORAGE_LIST, [{ id: saveId, ...storageInfo }])
   }
   goDialog({
     message: '保存成功',

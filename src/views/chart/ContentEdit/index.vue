@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, computed, provide, watch } from 'vue'
+import { onMounted, computed, provide, watch, ref } from 'vue'
 import { chartColors } from '@/settings/chartThemes/index'
 import { MenuEnum } from '@/enums/editPageEnum'
 import { CreateComponentType, CreateComponentGroupType } from '@/packages/index.d'
@@ -94,6 +94,7 @@ import { useAddKeyboard } from '../hooks/useKeyboard.hook'
 import { mousedownHandleUnStop, useMouseHandle } from './hooks/useDrag.hook'
 import { useComponentStyle, useSizeStyle } from './hooks/useStyle.hook'
 import { useInitVChartsTheme } from '@/hooks'
+import { fetchChartComponent } from '@/packages/index'
 
 import { ContentBox } from '../ContentBox/index'
 import { EditGroup } from './components/EditGroup'
@@ -105,6 +106,42 @@ import { EditTools } from './components/EditTools'
 
 const chartEditStore = useChartEditStore()
 const { handleContextMenu } = useContextMenu()
+
+// 注册图表组件
+const registerChartComponents = () => {
+  const componentList = chartEditStore.getComponentList
+  
+  const registerComponent = (target: CreateComponentType) => {
+    if (window['$vue'] && window['$vue'].component && target.chartConfig.chartKey) {
+      if (!window['$vue'].component(target.chartConfig.chartKey)) {
+        const component = fetchChartComponent(target.chartConfig)
+        if (component) {
+          window['$vue'].component(target.chartConfig.chartKey, component)
+          // console.log('注册图表组件:', target.chartConfig.chartKey)
+        }
+      }
+    }
+  }
+
+  componentList.forEach((e: CreateComponentType | CreateComponentGroupType) => {
+    if (e.isGroup) {
+      (e as CreateComponentGroupType).groupList.forEach(groupItem => {
+        registerComponent(groupItem)
+      })
+    } else {
+      registerComponent(e as CreateComponentType)
+    }
+  })
+}
+
+// 监听组件列表变化，重新注册组件
+watch(
+  () => chartEditStore.getComponentList,
+  () => {
+    registerChartComponents()
+  },
+  { deep: true }
+)
 
 // 编辑时注入scale变量，消除警告
 provide(SCALE_KEY, null)
@@ -181,6 +218,8 @@ useInitVChartsTheme(chartEditStore)
 // 键盘事件
 onMounted(() => {
   useAddKeyboard()
+  // 初始化注册图表组件
+  registerChartComponents()
 })
 </script>
 
