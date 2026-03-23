@@ -9,6 +9,9 @@
     :xScroll="true"
     :disabledScroll="true"
     @mousedown="mousedownHandleUnStop"
+    @drop="dragHandle"
+    @dragover="dragoverHandle"
+    @dragenter="dragoverHandle"
   >
     <edit-rule>
       <!-- 画布主体 -->
@@ -91,7 +94,7 @@ import { useChartEditStore } from '@/store/modules/chartEditStore/chartEditStore
 import { SCALE_KEY } from '@/views/preview/hooks/useScale.hook'
 import { useLayout } from './hooks/useLayout.hook'
 import { useAddKeyboard } from '../hooks/useKeyboard.hook'
-import { mousedownHandleUnStop, useMouseHandle } from './hooks/useDrag.hook'
+import { dragHandle, dragoverHandle, mousedownHandleUnStop, useMouseHandle } from './hooks/useDrag.hook'
 import { useComponentStyle, useSizeStyle } from './hooks/useStyle.hook'
 import { useInitVChartsTheme } from '@/hooks'
 import { fetchChartComponent } from '@/packages/index'

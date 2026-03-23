@@ -54,7 +54,7 @@ const previewHandle = () => {
   }
   // 跳转
   routerTurnByPath(path, [previewId], undefined, true)
-  ue5('openNewWindow', path + '/' + previewId)
+  // ue5('openNewWindow', path + '/' + previewId)
   const savePath = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href')
   ue5('saveWindow', savePath + '/' + previewId)
   ue5('openSaveWindow', path + '/' + previewId)

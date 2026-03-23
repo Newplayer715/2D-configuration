@@ -16,5 +16,7 @@ import PositionSetting from './PositionSetting.vue'
 import SizeSetting from './SizeSetting.vue'
 // 样式
 import StylesSetting from './StylesSetting.vue'
+// 菜单绑定
+import MenuBindSetting from './MenuBindSetting.vue'
 
-export { CollapseItem, SettingItemBox, SettingItem, GlobalSetting, GlobalSettingPosition, NameSetting, PositionSetting, SizeSetting, StylesSetting }
+export { CollapseItem, SettingItemBox, SettingItem, GlobalSetting, GlobalSettingPosition, NameSetting, PositionSetting, SizeSetting, StylesSetting, MenuBindSetting }

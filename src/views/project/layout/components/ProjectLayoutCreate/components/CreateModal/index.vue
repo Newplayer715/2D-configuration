@@ -11,7 +11,7 @@
               <component :is="CloseIcon"></component>
             </n-icon>
           </n-text>
-         </template>
+        </template>
         <n-space class="card-box-content" vertical>
           <n-form ref="formRef" :model="formData" :rules="rules">
             <n-form-item label="项目名称" path="projectName">
@@ -19,13 +19,8 @@
             </n-form-item>
           </n-form>
           <n-space class="card-box-content" justify="center">
-            <n-button
-              size="large"
-              :disabled="item.disabled"
-              v-for="item in typeList"
-              :key="item.key"
-              @click="btnHandle"
-            >
+            <n-button size="large" :disabled="item.disabled" v-for="item in typeList" :key="item.key"
+              @click="btnHandle">
               <component :is="item.title"></component>
               <template #icon>
                 <n-icon size="18">
@@ -112,7 +107,7 @@ const btnHandle = async (key: string) => {
     const id = getUUID()
     const path = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href')
     console.log(path + id, 'openNewWindow');
-    
+
     // 保存项目信息到本地存储
     const projectInfo = {
       id: id,
@@ -123,7 +118,7 @@ const btnHandle = async (key: string) => {
       [ChartEditStoreEnum.COMPONENT_LIST]: [],
       [ChartEditStoreEnum.REQUEST_GLOBAL_CONFIG]: chartEditStore.getRequestGlobalConfig
     }
-    
+
     // 获取现有项目列表
     const existingProjects = JSON.parse(localStorage.getItem(StorageEnum.GO_CHART_STORAGE_LIST) || '[]')
     // 添加新项目
@@ -131,8 +126,12 @@ const btnHandle = async (key: string) => {
     // 保存到本地存储
     localStorage.setItem(StorageEnum.GO_CHART_STORAGE_LIST, JSON.stringify(existingProjects))
     console.log('项目信息已保存到本地存储', projectInfo)
-    
-    ue5('openNewWindow', path +'/' + id)
+    const data = {
+      id: id,
+      path: path + '/' + id,
+      projectName: formData.value.projectName
+    }
+    ue5('openNewWindow', data)
     routerTurnByPath(path, [id], undefined, true)
   } catch (error) {
     console.log('表单验证失败', error)
@@ -147,17 +146,21 @@ $cardWidth: 570px;
   top: 200px;
   left: 50%;
   transform: translateX(-50%);
+
   .card-box {
     width: $cardWidth;
     cursor: pointer;
     border: 1px solid rgba(0, 0, 0, 0);
     @extend .go-transition;
+
     &:hover {
       @include hover-border-color('hover-border-color');
     }
+
     &-tite {
       font-size: 14px;
     }
+
     &-content {
       padding: 0px 10px;
       width: 100%;

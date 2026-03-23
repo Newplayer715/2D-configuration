@@ -23,8 +23,14 @@ export const useModalDataInit = () => {
   // 打开 modal
   const editHandle = (cardData: Chartype) => {
     if (!cardData) return
-    const path = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href')
-    ue5('openNewWindow', path + '/' + cardData.id)
+    console.log('cardData', cardData)
+    const path = fetchPathByName(ChartEnum.CHART_HOME_NAME, 'href') 
+    const data = {
+      id: cardData.id,
+      path: path + '/' + cardData.id,
+      projectName: cardData.title
+    }
+    ue5('openNewWindow', data)
     routerTurnByPath(path, [cardData.id], undefined, true)
   }
 

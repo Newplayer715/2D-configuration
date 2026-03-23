@@ -45,7 +45,12 @@ export type ConfigType = {
   // 图标
   icon?: string
   // 事件
-  configEvents?: { [T: string]: Function }
+  configEvents?: { [T: string]: Function },
+  // 菜单列表
+  menuBind?: {
+    menuId: string
+    isDefaultShow: boolean
+  }
 }
 
 // 数据请求

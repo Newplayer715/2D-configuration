@@ -61,6 +61,7 @@ export const createComponent = async (targetData: ConfigType) => {
  */
 const fetchComponent = (chartName: string, flag: FetchComFlagType) => {
   const module = flag === FetchComFlagType.VIEW ? indexModules : configModules
+
   for (const key in module) {
     const urlSplit = key.split('/')
     if (urlSplit[urlSplit.length - 2] === chartName) {

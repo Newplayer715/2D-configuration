@@ -12,7 +12,7 @@ export const useDataListInit = () => {
     try {
       const localStorageInfo = JSON.parse(localStorage.getItem(StorageEnum.GO_CHART_STORAGE_LIST) || '[]')
       console.log('GO_CHART_STORAGE_LIST', localStorageInfo)
-      
+
       // 转换为 ChartList 格式
       const chartList: ChartList = localStorageInfo.map((item: any) => ({
         id: item.id,
@@ -20,7 +20,7 @@ export const useDataListInit = () => {
         release: false, // 默认为未发布
         label: '我的项目' // 默认为我的项目
       }))
-      
+
       list.value = chartList
     } catch (error) {
       console.error('从本地存储加载数据失败', error)
@@ -46,7 +46,7 @@ export const useDataListInit = () => {
           const existingProjects = JSON.parse(localStorage.getItem(StorageEnum.GO_CHART_STORAGE_LIST) || '[]')
           const updatedProjects = existingProjects.filter((item: any) => item.id !== cardData.id)
           localStorage.setItem(StorageEnum.GO_CHART_STORAGE_LIST, JSON.stringify(updatedProjects))
-          
+          ue5('deleteproject', { id: cardData.id,projectName:cardData.title })
           // 更新列表显示
           list.value.splice(index, 1)
           window.$message.success('删除成功')
